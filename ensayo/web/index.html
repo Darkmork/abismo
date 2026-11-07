@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ensayo · diez preguntas al día</title>
+<meta name="description" content="Diez preguntas de matemática estilo PAES al día. Cuatro opciones, tres corazones, y la explicación de cada respuesta. Reto diario y práctica libre.">
+<meta name="theme-color" content="#14211d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314211d'/%3E%3Cpath d='M18 46 L46 18' stroke='%23f2b544' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M46 18 l4 4 -6 6 -4 -4 z' fill='%23f4f1e8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ══════════════════════════ INTRO ══════════════════════════ -->
+  <section id="scr-intro" class="screen is-active">
+    <div class="wrap">
+
+      <header class="hero">
+        <p class="eyebrow">ENSAYO</p>
+        <h1 class="hero__title">diez preguntas al día</h1>
+        <p class="hero__lede">
+          Matemática de la <strong>PAES</strong>, en formato de reto.
+          Cuatro opciones, tres corazones y la explicación de cada respuesta
+          — la que te faltaba cuando te equivocaste en la prueba.
+        </p>
+        <p class="hero__chalk">y no vale reproducirse</p>
+      </header>
+
+      <div class="cards">
+        <button class="card card--main" id="btn-diario" type="button">
+          <span class="card__tag">Reto diario</span>
+          <span class="card__title">Diez preguntas, las mismas para todos</span>
+          <span class="card__desc" id="diario-desc">Se renueva cada día a las 00:00 (hora de Chile). Con tiempo, con corazones y con racha de días.</span>
+          <span class="card__go">Jugar →</span>
+        </button>
+
+        <button class="card card--main card--alt" id="btn-practica" type="button">
+          <span class="card__tag">Práctica libre</span>
+          <span class="card__title">Sin reloj, sin presión</span>
+          <span class="card__desc">Banco de 600 preguntas por los cuatro ejes del temario, con explicación inmediata y cuaderno de errores.</span>
+          <span class="card__go">Elegir eje →</span>
+        </button>
+      </div>
+
+      <div class="stats" id="stats">
+        <div class="stat"><b id="st-racha">0</b><span>racha actual</span></div>
+        <div class="stat"><b id="st-mejor">0</b><span>mejor racha</span></div>
+        <div class="stat"><b id="st-dias">0</b><span>días jugados</span></div>
+        <div class="stat"><b id="st-aciertos">0</b><span>aciertos</span></div>
+      </div>
+
+      <div class="cols">
+        <div class="panel">
+          <h2>Cómo funciona</h2>
+          <ol class="steps">
+            <li><b>Diez preguntas</b> con el temario de la PAES: números, álgebra y funciones, geometría, y probabilidad y estadística.</li>
+            <li><b>Cuarenta y cinco segundos</b> por pregunta. Si se acaba el tiempo, cuenta como error y pierdes un corazón.</li>
+            <li><b>Tres corazones.</b> Al tercero pierdes el intento.</li>
+            <li><b>Cada respuesta viene con su explicación</b>, paso a paso. No hay castigo por leerla.</li>
+          </ol>
+        </div>
+
+        <div class="panel">
+          <h2>El temario</h2>
+          <ul class="ejes">
+            <li><b>Números</b><span>racionales · porcentajes · potencias</span></li>
+            <li><b>Álgebra y funciones</b><span>productos notables · ecuaciones · sistemas · funciones</span></li>
+            <li><b>Geometría</b><span>Pitágoras · áreas · volúmenes · semejanza</span></li>
+            <li><b>Probabilidad y estadística</b><span>probabilidades · promedio · cuartiles</span></li>
+          </ul>
+          <p class="nota">
+            Los distractores no son números al azar: son los <em>errores típicos</em>
+            que la gente comete en la PAES.
+          </p>
+        </div>
+      </div>
+
+      <div class="pie">
+        <button class="linkbtn" id="btn-cuaderno" type="button">Cuaderno de errores</button>
+        <span class="pie__sep">·</span>
+        <span class="pie__txt">Cada pregunta se recalcula desde su propio enunciado antes de publicarse.</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ JUEGO ══════════════════════════ -->
+  <section id="scr-play" class="screen">
+    <div class="wrap wrap--play">
+
+      <div class="hud">
+        <button class="hud__back" id="btn-abandonar" type="button" title="Volver al inicio">←</button>
+        <div class="hud__meta">
+          <span class="hud__eje" id="hud-eje">—</span>
+          <span class="hud__unidad" id="hud-unidad"></span>
+        </div>
+        <div class="hud__right">
+          <span class="hud__pts" id="hud-puntos">0</span>
+          <span class="hud__hearts" id="hud-corazones" aria-label="corazones"></span>
+        </div>
+      </div>
+
+      <div class="rail" id="rail">
+        <div class="rail__fill" id="rail-fill"></div>
+        <div class="rail__lapiz" id="rail-lapiz" aria-hidden="true">✎</div>
+      </div>
+
+      <div class="tiempo" id="tiempo-wrap">
+        <div class="tiempo__bar"><div class="tiempo__fill" id="tiempo-fill"></div></div>
+        <span class="tiempo__num" id="tiempo-num">45</span>
+      </div>
+
+      <div class="pregunta">
+        <p class="pregunta__num" id="pregunta-num">Pregunta 1 de 10</p>
+        <h2 class="pregunta__texto" id="pregunta-texto">—</h2>
+        <div class="opciones" id="opciones"></div>
+      </div>
+
+      <div class="feedback" id="feedback" hidden>
+        <p class="feedback__titulo" id="feedback-titulo"></p>
+        <div class="feedback__cuerpo" id="feedback-cuerpo"></div>
+        <button class="btn btn--go" id="btn-siguiente" type="button">Siguiente →</button>
+      </div>
+
+      <p class="hint">Teclas <b>1</b>–<b>4</b> para responder · <b>Enter</b> para seguir</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ RESULTADO ══════════════════════════ -->
+  <section id="scr-result" class="screen">
+    <div class="wrap wrap--result">
+      <p class="result__estrellas" id="result-estrellas">★★★</p>
+      <h2 class="result__titulo" id="result-titulo">Reto completado</h2>
+      <p class="result__sub" id="result-sub"></p>
+
+      <div class="result__cifras">
+        <div><b id="result-aciertos">0/10</b><span>correctas</span></div>
+        <div><b id="result-puntos">0</b><span>puntos</span></div>
+        <div><b id="result-racha">0</b><span>mejor racha</span></div>
+      </div>
+
+      <ul class="desglose" id="result-desglose"></ul>
+
+      <div class="result__botones">
+        <button class="btn btn--go" id="btn-compartir" type="button">Compartir resultado</button>
+        <button class="btn" id="btn-otra-vez" type="button">Volver a intentarlo</button>
+        <button class="btn btn--ghost" id="btn-inicio" type="button">Ir al inicio</button>
+      </div>
+      <p class="result__nota" id="result-nota"></p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ PRÁCTICA ══════════════════════════ -->
+  <section id="scr-config" class="screen">
+    <div class="wrap wrap--config">
+      <h2 class="config__titulo">Práctica libre</h2>
+      <p class="config__lede">Sin reloj y sin corazones. Cada respuesta viene con su explicación al tiro.</p>
+
+      <div class="config__bloque">
+        <h3>¿Qué quieres practicar?</h3>
+        <div class="chips" id="eje-chips">
+          <button class="chip is-on" data-eje="Todos" type="button">Todos</button>
+          <button class="chip" data-eje="Números" type="button">Números</button>
+          <button class="chip" data-eje="Álgebra y funciones" type="button">Álgebra</button>
+          <button class="chip" data-eje="Geometría" type="button">Geometría</button>
+          <button class="chip" data-eje="Probabilidad y estadística" type="button">Probabilidad</button>
+        </div>
+      </div>
+
+      <div class="config__bloque">
+        <h3>¿Cuántas preguntas?</h3>
+        <div class="chips" id="n-chips">
+          <button class="chip" data-n="5" type="button">5</button>
+          <button class="chip is-on" data-n="10" type="button">10</button>
+          <button class="chip" data-n="20" type="button">20</button>
+          <button class="chip" data-n="30" type="button">30</button>
+        </div>
+      </div>
+
+      <button class="btn btn--go btn--big" id="btn-empezar-practica" type="button">Empezar →</button>
+      <button class="btn btn--ghost" id="btn-cuaderno-2" type="button">Ver cuaderno de errores</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ CUADERNO ══════════════════════════ -->
+  <section id="scr-cuaderno" class="screen">
+    <div class="wrap">
+      <div class="cuaderno__head">
+        <h2 class="config__titulo">Cuaderno de errores</h2>
+        <button class="btn btn--ghost" id="btn-cuaderno-cerrar" type="button">Cerrar</button>
+      </div>
+      <p class="config__lede" id="cuaderno-lede">Las preguntas que fallaste, con su explicación.</p>
+      <div id="cuaderno-lista"></div>
+      <button class="btn btn--go" id="btn-practicar-errores" type="button" hidden>Practicar solo estos errores</button>
+    </div>
+  </section>
+
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="data/daily.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
