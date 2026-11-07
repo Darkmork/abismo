@@ -300,7 +300,59 @@ $ python3 abismo.py play
 
 ---
 
-## 9. Alternativas que miré y descarté
+## 9. Estado actual: implementado y desplegado
+
+**▶️ https://abismo-seven.vercel.app** — repo en https://github.com/Darkmork/abismo
+
+| Pieza | Qué es |
+|---|---|
+| `abismo.py` | motor: 17 familias, scoring, seed por fecha, CLI (`daily`/`play`/`tune`) |
+| `fama.py` | oráculo de familiaridad (pageviews de Wikipedia) con throttle, cache y modo offline |
+| `precompute.py` | genera la tabla de 14 dailies → `web/data/daily.js` (42 KB) |
+| `smoke.js` | test de humo: corre el `app.js` real contra un DOM simulado y juega una partida completa |
+| `web/` | el juego: intro, dive con timer de 25 s, columna de profundidad con estratos, resultado con gemas y récord local |
+
+**El repo está enlazado al proyecto de Vercel con `main` como producción:**
+cada `git push` despliega solo (verificado: push → deployment en 25 s).
+
+### Por qué no hay backend, y cuándo sí
+
+El diseño completo no lo necesita, y eso es deliberado:
+
+- Los prompts se generan con un seed (la fecha) → los mismos 7 para todos, sin servidor.
+- La validación ocurre en el cliente contra el conjunto horneado en la tabla.
+- La rareza sale de un oráculo estático (pageviews + forma del número).
+- El ranking es local (`localStorage`).
+
+Lo que sí pediría backend — y es lo que Railway aguantaría — es la **v2**:
+
+1. **Ranking global del día** → Postgres + una API de lectura.
+2. **Rareza por jugadores reales**: cuando suficientes personas responden, su
+   distribución ajusta los tiers. Es la capa 2 del modelo, y es lo que hace
+   bueno a Krillion con el tiempo (y lo que habilita el modo duelo).
+3. Cuentas, amigos, compartidos.
+
+Son módulos aparte: no tocan el motor ni el cliente, solo agregan un endpoint
+que consulta `tabla + respuestas_de_jugadores`.
+
+### Bugs que aparecieron y valieron la pena
+
+- **La rareza invertida.** El primer modelo daba "Profundo" al 1 y "Legendario"
+  al 40755, porque el índice de serie no es orden de fama. Lo arregló el
+  oráculo de corpus.
+- **El cache envenenado.** Un 429 de Wikimedia se cacheaba como "sin artículo"
+  y dejaba lo raro como famoso (21 salió más famoso que 55). Un 404 es
+  definitivo; un 429 no se cachea nunca.
+- **Una familia degenerada.** "Cubo y triangular" tiene una sola respuesta
+  válida (1): el único cubo triangular es 1. Verificado por fuerza bruta hasta
+  k = 300 000.
+- **M_PER_M vs M_PER_PT** en el cliente: la intro se quedaba sin listas.
+- **El submit nativo del form** recargaba la página y perdía la partida.
+  Ahora el botón es `type="button"` y Enter va por `keydown`.
+
+---
+
+## 10. Alternativas que miré y descarté
 
 - **Aritmética diaria clásica** (cuenta, memoria, operación mental): mercado
   saturadísimo, sin ninguna conexión con Krillion.
@@ -315,3 +367,19 @@ $ python3 abismo.py play
 - **Mantener el océano**: es copiar la marca. La versión con estratos de
   teoría de números es mejor justamente porque el tema y el contenido son
   propios.
+
+---
+
+## 11. Lo que falta para que esto sea un juego de verdad
+
+1. **Más familias.** 17 dan para ~2 semanas sin repetir. Faltan las densas
+   bien resueltas (Legendre ya está; primalidad, congruencias, sumas de
+   potencias) y familias de respuesta no numérica (¿un número *escrito con
+   palabras*?).
+2. **La capa 2 de rareza.** Ranking global en Railway + frecuencia real de
+   jugadores. Sin eso, "raro" significa "no muy conocido por Wikipedia".
+3. **Modo duelo.** El `party` de Krillion: 4 personas, mismas 7 preguntas, la
+   más honda gana.
+4. **Más de un daily.** Hoy es un dive por fecha. Podría ser "el dive del día"
+   + "el dive difícil del sábado" (conjuntos más ralos, timer más corto).
+5. **Modo practice** sin timer, para aprender las series.
