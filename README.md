@@ -5,6 +5,8 @@ Juego matemático daily inspirado en la mecánica de
 respuestas válidas** y no importa si aciertas — importa **qué tan rara** es tu
 respuesta. Las obvias no te hunden nada; las raras te llevan al fondo.
 
+**▶️ Jugar: https://abismo-seven.vercel.app**
+
 ```
 Común 10 · Curioso 15 · Raro 30 · Profundo 60 · Abisal 85 · Legendario 100
 1 punto = 10 metros · 7 preguntas = 7 000 m de profundidad
@@ -21,6 +23,7 @@ y no hay fuzzy matching ni aliases.
 abismo.py       motor: 17 familias de preguntas, scoring, seed por fecha
 fama.py         oráculo de familiaridad (pageviews de Wikipedia) + cache
 precompute.py   genera la tabla de dailies para el sitio (web/data/daily.js)
+smoke.js        test de humo: corre el app.js real contra un DOM simulado
 DISENO.md       investigación de krillion.io y diseño completo del juego
 web/            el juego (HTML + CSS + JS plano, sin build)
 ```
@@ -31,6 +34,8 @@ web/            el juego (HTML + CSS + JS plano, sin build)
 python3 abismo.py daily     # muestra el dive del día con sus gemas
 python3 abismo.py play      # versión jugable en terminal, timer de 25 s
 python3 abismo.py tune      # calibración de umbrales
+node smoke.js               # test de humo del cliente (necesita node)
+cd web && python3 -m http.server 8899   # el sitio en http://localhost:8899
 ```
 
 El motor usa la red solo para calibrar la rareza (pageviews de Wikipedia).
@@ -52,14 +57,19 @@ calculada, así que es 100% estático.
 
 ## Desplegar
 
-`vercel.json` ya está configurado: sitio estático, output `web/`, sin build.
+El repo ya está enlazado al proyecto de Vercel, con la rama `main` como
+producción: **cada `git push` despliega solo**.
 
 ```bash
-npx vercel deploy web --prod     # una vez
-npx vercel --prod                # cada vez que cambie algo
+git push                                     # despliega
+vercel ls                                    # ver los despliegues
+vercel deploy --prod                         # o a mano
 ```
 
-O importá el repo en Vercel y cada push a `main` despliega solo.
+`vercel.json` ya está configurado: sitio estático, output `web/`, sin build.
+
+Si prefieres el flujo de la GUI: importá el repo en Vercel y cada push a
+`main` despliega igual.
 
 ## Por qué no hay backend (todavía)
 
