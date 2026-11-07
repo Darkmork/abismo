@@ -165,7 +165,7 @@ body::before {
 .abyss__marks { position: absolute; inset: 0; }
 .abyss__marks span {
   position: absolute; right: 8px; font-family: var(--mono); font-size: 9.5px;
-  color: rgba(255,255,255,.42); transform: translateY(-50%);
+  color: rgba(255,255,255,.5); transform: translateY(-50%); white-space: nowrap;
 }
 .abyss__marks span::before {
   content: ""; position: absolute; right: 100%; margin-right: 6px; top: 50%;

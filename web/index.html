@@ -94,10 +94,10 @@
 
         <h2 class="prompt" id="prompt-text">…</h2>
 
-        <form class="answer" id="answer-form" autocomplete="off">
+        <form class="answer" id="answer-form" autocomplete="off" onsubmit="return false">
           <input id="answer-input" type="text" inputmode="numeric" pattern="[0-9]*"
                  placeholder="escribe un número" aria-label="Tu respuesta">
-          <button class="btn btn--send" type="submit">Enviar</button>
+          <button class="btn btn--send" type="button" id="btn-answer">Enviar</button>
         </form>
 
         <div class="feedback" id="feedback" aria-live="polite"></div>

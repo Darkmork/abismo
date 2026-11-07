@@ -100,8 +100,12 @@
 
   /* ── intro ──────────────────────────────────────────────── */
   function buildIntro() {
+    $("abyss-marks").innerHTML = STRATA.map(
+      (s) => `<span style="top:${(s[1] / MAX_DEPTH) * 100}%">${s[1]} m</span>`
+    ).join("");
+
     $("tierlist").innerHTML = TIERS.map(
-      (t) => `<li><span class="n t-${t[0]}">${t[0]}</span><span class="p">${t[1]} pts · ${t[1] * M_PER_M} m</span></li>`
+      (t) => `<li><span class="n t-${t[0]}">${t[0]}</span><span class="p">${t[1]} pts · ${t[1] * M_PER_PT} m</span></li>`
     ).join("");
 
     $("stratalist").innerHTML = STRATA.map(
@@ -215,11 +219,11 @@
     }
 
     points += hit.pts;
-    depth = Math.min(MAX_DEPTH, points * M_PER_M);
+    depth = Math.min(MAX_DEPTH, points * M_PER_PT);
     const same = String(n) === String(p.gem);
     fb.innerHTML = `<div class="fb fb--ok">
         <span class="tier t-${hit.tier}">${hit.tier}</span>
-        <span class="pts">+${hit.pts} pts · +${hit.pts * M_PER_M} m</span>
+        <span class="pts">+${hit.pts} pts · +${hit.pts * M_PER_PT} m</span>
         <span class="why">${same ? "esa era la gema: la respuesta más rara de todas"
           : `la gema de esta pregunta era <b>${p.gem}</b>`}</span>
       </div>`;
@@ -287,7 +291,12 @@
   }
 
   /* ── arranque ───────────────────────────────────────────── */
-  $("answer-form").addEventListener("submit", (e) => { e.preventDefault(); submit(false); });
+  // Nada de submit nativo: el form no navega nunca.
+  $("answer-form").addEventListener("submit", (e) => { e.preventDefault(); });
+  $("btn-answer").addEventListener("click", () => submit(false));
+  $("answer-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); submit(false); }
+  });
 
   if (!DATA || !DATA.days) {
     document.getElementById("app").innerHTML =
@@ -298,4 +307,5 @@
     return;
   }
   buildIntro();
+  if (location.hash === "#auto") startRun(dayKey);
 })();
