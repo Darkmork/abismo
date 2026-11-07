@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Abismo · el descenso diario</title>
+<meta name="description" content="Siete preguntas de matemáticas al día. No importa si aciertas: importa qué tan rara es tu respuesta. Las raras te hunden más.">
+<meta name="theme-color" content="#05070f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ───────────────────────── INTRO ───────────────────────── -->
+  <section id="scr-intro" class="screen is-active">
+    <div class="intro">
+      <header class="intro__head">
+        <p class="eyebrow">ABISMO</p>
+        <h1 class="title">el descenso diario</h1>
+        <p class="lede">
+          Siete preguntas de matemáticas al día. No importa si aciertas:
+          importa <strong>qué tan rara</strong> es tu respuesta.
+          Las obvias no te hunden nada. Las raras te llevan al fondo.
+        </p>
+      </header>
+
+      <div class="intro__cols">
+        <div class="card card--rules">
+          <h2>Cómo funciona</h2>
+          <ol class="rules">
+            <li>Cada pregunta define un conjunto de respuestas <strong>válidas</strong>. Ejemplo: <em>"un número que sea a la vez triangular y pentagonal"</em> → 1, 210, 40755…</li>
+            <li>Escribes <strong>una</strong> respuesta y la envías. 25 segundos.</li>
+            <li>Tu respuesta se puntúa por su rareza: de <b class="t-Común">Común</b> (10 pts) a <b class="t-Legendario">Legendario</b> (100 pts).</li>
+            <li>Cada punto son 10 metros. El fondo está a <strong>7 000 m</strong>.</li>
+          </ol>
+          <p class="fineprint">
+            La rareza se mide con un oráculo de familiaridad: cuántas veces la
+            gente mira ese número en Wikipedia, más la forma del número
+            (los redondos y los chicos son los que se te ocurren antes).
+          </p>
+        </div>
+
+        <div class="card card--tiers">
+          <h2>Las seis profundidades</h2>
+          <ul class="tierlist" id="tierlist"></ul>
+          <div class="strata">
+            <h3>Estratos</h3>
+            <ul id="stratalist"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro__foot">
+        <button id="btn-start" class="btn btn--go">Iniciar el descenso</button>
+        <label class="daypick">
+          <span>Fecha</span>
+          <select id="sel-day"></select>
+        </label>
+        <p class="best" id="best-line"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── JUEGO ───────────────────────── -->
+  <section id="scr-game" class="screen">
+    <div class="game">
+
+      <!-- columna de profundidad -->
+      <aside class="abyss" aria-hidden="true">
+        <div class="abyss__col">
+          <div class="abyss__water"></div>
+          <div class="abyss__marks" id="abyss-marks"></div>
+          <div class="diver" id="diver"><span class="diver__body"></span></div>
+        </div>
+        <div class="abyss__read">
+          <p class="depth" id="depth-now">0<small>m</small></p>
+          <p class="zone" id="zone-now">superficie</p>
+          <p class="pts" id="pts-now">0 pts</p>
+        </div>
+      </aside>
+
+      <!-- prompt -->
+      <main class="stage">
+        <div class="stage__bar">
+          <span class="round" id="round-label">pregunta 1 / 7</span>
+          <span class="strat" id="strat-label">Aritmética</span>
+          <span class="timer" id="timer-label">25</span>
+        </div>
+        <div class="timerbar"><div class="timerbar__fill" id="timer-fill"></div></div>
+
+        <h2 class="prompt" id="prompt-text">…</h2>
+
+        <form class="answer" id="answer-form" autocomplete="off">
+          <input id="answer-input" type="text" inputmode="numeric" pattern="[0-9]*"
+                 placeholder="escribe un número" aria-label="Tu respuesta">
+          <button class="btn btn--send" type="submit">Enviar</button>
+        </form>
+
+        <div class="feedback" id="feedback" aria-live="polite"></div>
+
+        <p class="hint" id="hint"></p>
+      </main>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── RESULTADO ───────────────────────── -->
+  <section id="scr-end" class="screen">
+    <div class="end">
+      <p class="eyebrow" id="end-date">—</p>
+      <h2 class="end__depth"><span id="end-depth">0</span><small>m</small></h2>
+      <p class="end__pts"><span id="end-pts">0</span> puntos</p>
+
+      <ul class="breakdown" id="breakdown"></ul>
+
+      <div class="end__gems" id="gems"></div>
+
+      <div class="end__actions">
+        <button class="btn btn--ghost" id="btn-copy">Copiar resultado</button>
+        <button class="btn btn--ghost" id="btn-home">Volver al inicio</button>
+      </div>
+      <p class="best" id="end-best"></p>
+    </div>
+  </section>
+
+</div>
+
+<script src="data/daily.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
